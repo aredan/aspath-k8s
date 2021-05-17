@@ -1,0 +1,75 @@
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: aspath
+  name: timescaledb
+  labels:
+    app: timescaledb
+spec:
+  selector:
+    matchLabels:
+      app: timescaledb
+  template:
+    metadata:
+      labels:
+        app: timescaledb
+    spec:
+      containers:
+      - name: timescaledb
+        image: timescale/timescaledb:2.1.1-pg13
+        env:
+          - name: TZ
+            value: "America/Santo_Domingo"
+          - name: POSTGRES_HOST_AUTH_METHOD
+            value: "trust"
+          - name: POSTGRES_DB
+            value: "aspath"
+        ports:
+        - name: timescale-tcp1
+          containerPort: 5431
+          protocol: TCP
+        - name: timescale-tcp2
+          containerPort: 5432
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: 500m
+            memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: timescaledb
+  namespace: aspath
+  labels:
+    app: timescaledb
+spec:
+  ports:
+  - port: 5431
+    name: timescaledb-tcp-5431
+  - port: 5432
+    name: timescaledb-tcp-5432
+  selector:
+    app: timescaledb
+  sessionAffinity: "ClientIP"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: aspath
+  labels:
+    app: timescaledb
+spec:
+  ports:
+  - port: 5431
+    name: timescaledb-tcp-5431
+  - port: 5432
+    name: timescaledb-tcp-5432
+  selector:
+    app: timescaledb
+  sessionAffinity: "ClientIP"

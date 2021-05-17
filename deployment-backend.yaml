@@ -1,0 +1,70 @@
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: aspath
+  name: aspath-backend
+  labels:
+    app: aspath-backend
+spec:
+  selector:
+    matchLabels:
+      app: aspath-backend
+  template:
+    metadata:
+      labels:
+        app: aspath-backend
+    spec:
+      containers:
+      - name: aspath-backend
+        image: aredan/aspath-backend:develop-20210517
+        command: ["/start-reload.sh"]
+        env:
+          - name: TZ
+            value: "America/Santo_Domingo"
+        volumeMounts:
+        - name: backend-config
+          mountPath: /app/configuration/aspath.toml
+          subPath: aspath.toml
+        ports:
+        - name: backend-tcp
+          containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: 500m
+            memory: 256Mi
+      - name: celerybeat
+        image: aredan/aspath-backend:develop-20210517
+        command: ["/start_celerybeat.sh"]
+        env:
+          - name: TZ
+            value: "America/Santo_Domingo"
+      - name: celery-worker
+        image: aredan/aspath-backend:develop-20210517
+        command: ["/start_celery.sh"]
+        env:
+          - name: TZ
+            value: "America/Santo_Domingo"
+      volumes:
+      - name: backend-config
+        configMap:
+          name: backend-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: aspath
+  labels:
+    app: aspath-backend
+spec:
+  ports:
+  - port: 80 
+    name: backend-tcp-80
+  selector:
+    app: aspath-backend
+  sessionAffinity: "ClientIP"

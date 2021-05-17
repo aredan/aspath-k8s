@@ -1,0 +1,50 @@
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: aspath
+  name: aspath-frontend
+  labels:
+    app: aspath-frontend
+spec:
+  selector:
+    matchLabels:
+      app: aspath-frontend
+  template:
+    metadata:
+      labels:
+        app: aspath-frontend
+    spec:
+      containers:
+      - name: aspath-frontend
+        image: aredan/aspath-frontend:develop-20210517
+        env:
+          - name: TZ
+            value: "America/Santo_Domingo"
+        ports:
+        - name: frontend-tcp
+          containerPort: 8080
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: 500m
+            memory: 256Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aspath-frontend
+  namespace: aspath
+  labels:
+    app: aspath-frontend
+spec:
+  ports:
+  - port: 8080 
+    name: frontend-tcp-8000
+  selector:
+    app: aspath-frontend
+  sessionAffinity: "ClientIP"
