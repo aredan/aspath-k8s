@@ -10,10 +10,10 @@ data:
       hour = 6
       minutes = 34
 
-    [grabbers."route-collector.ros.pch.net"]
-    # run at 6:50 AM everyday
-    hour = 6
-    minutes = 50
+#    [grabbers."route-collector.ros.pch.net"]
+#    # run at 6:50 AM everyday
+#    hour = 6
+#    minutes = 50
 kind: ConfigMap
 metadata:
   name: backend-config

@@ -7,6 +7,8 @@ metadata:
   labels:
     app: aspath-frontend
 spec:
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: aspath-frontend
@@ -17,7 +19,7 @@ spec:
     spec:
       containers:
       - name: aspath-frontend
-        image: aredan/aspath-frontend:develop-20210517
+        image: aredan/aspath-frontend:develop-20210522
         env:
           - name: TZ
             value: "America/Santo_Domingo"

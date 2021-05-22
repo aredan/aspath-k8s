@@ -7,6 +7,8 @@ metadata:
   labels:
     app: aspath-backend
 spec:
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: aspath-backend
@@ -17,7 +19,7 @@ spec:
     spec:
       containers:
       - name: aspath-backend
-        image: aredan/aspath-backend:develop-20210517
+        image: aredan/aspath-backend:develop-20210522
         command: ["/start-reload.sh"]
         env:
           - name: TZ
@@ -38,13 +40,13 @@ spec:
             cpu: 500m
             memory: 256Mi
       - name: celerybeat
-        image: aredan/aspath-backend:develop-20210517
+        image: aredan/aspath-backend:develop-20210522
         command: ["/start_celerybeat.sh"]
         env:
           - name: TZ
             value: "America/Santo_Domingo"
       - name: celery-worker
-        image: aredan/aspath-backend:develop-20210517
+        image: aredan/aspath-backend:develop-20210522
         command: ["/start_celery.sh"]
         env:
           - name: TZ
